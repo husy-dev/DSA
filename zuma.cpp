@@ -1,17 +1,74 @@
 #include<iostream>
-#include<vector>
 #include<algorithm>
 using namespace std;
 
+//自己实现ivector的缩容扩容
+template <typename T> class ivector{
+    private:
+        size_t _size, _capacity;
+        T* _elems;
+        void enlarge(){  //默认两倍扩充
+            this->_capacity *=2;
+            T* tmp = this->_elems;
+            this->_elems=new T[this->_capacity];
+            for (int i=0;i<this->_size;++i){
+                this->_elems[i]=tmp[i];
+            }
+            delete [] tmp;
+        }
+        bool checkOver(){
+            return this->_size>=this->_capacity;
+        }     
+    public:
+        ivector(){
+            this->_capacity=10;
+            this->_size=0;
+            this->_elems=new T[this->_capacity];
+        }
+        ivector(const size_t _size, T val){
+            this->_capacity= _size;
+            this->_size=this->_capacity;
+            this->_elems=new T[this->_size]();
+            for(int i=0;i<this->_size;++i){
+                this->_elems[i]=val;
+            }
+
+        }
+        void push_back(T val){
+            if (checkOver()){
+                this->enlarge();
+            }
+            this->_elems[this->_size++]=val;
+        }
+        size_t size(){
+            return this->_size;
+        }
+        T at(size_t loc){
+            return this->_elems[loc];
+        }
+
+        void clear(){
+            delete [] this->_elems;
+            this->_size=0;
+            this->_capacity = 10;
+            this->_elems = new T[this->_capacity]();
+        }
+
+        T& operator[](size_t loc){
+            return this->_elems[loc];
+        }
+
+};
+
 int main(){
     string a;
-    vector<vector<int> > ans(32,vector<int>());
+    ivector<ivector<int> > ans(32,ivector<int>());
     int i =0;
     int num,loc;
     char ch;
     int maxLen=0;
     cin>>a>>num;
-    vector<string> result;
+    ivector<string> result;
     for(int i=0;i<a.size();++i){
         ans[a[i]-'A'].push_back(i);
         maxLen++;
@@ -50,7 +107,7 @@ int main(){
         }
         
         //打印
-        vector<char> l(maxLen,'*');
+        ivector<char> l(maxLen,'*');
         for (int i=0;i<32;++i){
             for(int j=0;j<ans[i].size();++j){
                 l[ans[i][j]]=i+'A';
@@ -71,6 +128,5 @@ int main(){
     for(int i=0;i<result.size();++i){
         cout<<result[i]<<"\n";
     }
-
     return 0;
 }
